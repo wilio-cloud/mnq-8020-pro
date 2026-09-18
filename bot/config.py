@@ -23,10 +23,11 @@ class BotConfig:
     account_id: Optional[int] = int(os.getenv("TRADOVATE_ACCOUNT_ID")) if os.getenv("TRADOVATE_ACCOUNT_ID") else None
     account_spec: Optional[str] = os.getenv("TRADOVATE_ACCOUNT_SPEC", None)
     
-    # Paràmetres estratègia
+    # Paràmetres estratègia (80/20 NY Open)
     symbol_base: str = os.getenv("SYMBOL_BASE", "MNQ")
-    tp_points: float = float(os.getenv("TP_POINTS", "10.0"))
-    sl_points: float = float(os.getenv("SL_POINTS", "60.0"))
+    tp_points: float = float(os.getenv("TP_POINTS", "12.0"))
+    sl_points: float = float(os.getenv("SL_POINTS", "50.0"))
+    max_daily_trades: int = int(os.getenv("MAX_DAILY_TRADES", "1"))
     tick_size: float = 0.25
     point_value: float = 2.0  # 1 punt MNQ = $2 USD
     
@@ -35,14 +36,16 @@ class BotConfig:
     initial_contracts: int = int(os.getenv("INITIAL_CONTRACTS", "1"))
     evaluation_contracts: int = int(os.getenv("EVALUATION_CONTRACTS", "8"))  # Opció A: 8 MNQ Turbo Fast-Pass
     evaluation_include_asia: bool = os.getenv("EVALUATION_INCLUDE_ASIA", "true").lower() in ("true", "1", "yes")
-    evaluation_min_entry_hour: int = int(os.getenv("EVALUATION_MIN_ENTRY_HOUR", "5"))  # 05:00 EDT (11:00 CEST)
-    auto_scale: bool = os.getenv("AUTO_SCALE", "true").lower() in ("true", "1", "yes")
+    evaluation_min_entry_hour: int = int(os.getenv("EVALUATION_MIN_ENTRY_HOUR", "5"))
+    auto_scale: bool = os.getenv("AUTO_SCALE", "false").lower() in ("true", "1", "yes")
     scale_threshold_2: float = float(os.getenv("SCALE_THRESHOLD_2_CONTRACTS", "2200.0"))
     scale_threshold_3: float = float(os.getenv("SCALE_THRESHOLD_3_CONTRACTS", "3500.0"))
     scale_threshold_4: float = float(os.getenv("SCALE_THRESHOLD_4_CONTRACTS", "4800.0"))
     
     # Horaris (EDT / America/New_York)
     timezone: str = "America/New_York"
+    ny_open_hour: int = int(os.getenv("NY_OPEN_HOUR", "9"))
+    ny_open_minute: int = int(os.getenv("NY_OPEN_MINUTE", "30"))
     asia_start_hour: int = int(os.getenv("ASIA_START_HOUR", "20"))
     asia_end_hour: int = int(os.getenv("ASIA_END_HOUR", "0"))
     london_start_hour: int = int(os.getenv("LONDON_START_HOUR", "2"))
@@ -53,7 +56,10 @@ class BotConfig:
     eod_close_minute: int = int(os.getenv("EOD_CLOSE_MINUTE", "55"))
     
     # Alertes
-    discord_webhook_url: Optional[str] = os.getenv("DISCORD_WEBHOOK_URL", None)
+    discord_webhook_url: Optional[str] = os.getenv(
+        "DISCORD_WEBHOOK_URL",
+        "https://discord.com/api/webhooks/1550422906197254175/GIXPr_ZzH4S0KF7irCbEb9wiim3lO8e0_TiMK7mXNWYiKjHD6VFWKMkhKXec8paO-z7n"
+    )
     telegram_bot_token: Optional[str] = os.getenv("TELEGRAM_BOT_TOKEN", None)
     telegram_chat_id: Optional[str] = os.getenv("TELEGRAM_CHAT_ID", None)
 

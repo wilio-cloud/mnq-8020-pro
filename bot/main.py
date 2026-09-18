@@ -53,7 +53,11 @@ def start_health_server(port: int):
                 active_contract = resolve_active_contract(tradovate_client, config.symbol_base)
                 resp = {
                     "status": "healthy",
-                    "service": "Tradovate MNQ Zones & Macro Bot",
+                    "service": "MNQ 80/20 NY Open & Macro Bot",
+                    "strategy": "80/20 NY Open (15:30 CEST)",
+                    "tp_points": config.tp_points,
+                    "sl_points": config.sl_points,
+                    "max_daily_trades": config.max_daily_trades,
                     "environment": config.tradovate_env.upper(),
                     "mode": config.bot_mode.upper(),
                     "active_contract": active_contract,

@@ -38,7 +38,8 @@ def test_fomc_standard_restricted():
     res = get_day_trading_status(fomc_standard)
     assert res["status"] == "RESTRICTED"
     assert res["severity"] == "RED"
-    assert "18:00 CEST" in res["badge"]
+    assert "FOMC" in res["badge"]
+    assert "18:00 CEST" in res["instructions"]
 
 def test_amber_nfp_restricted():
     nfp = datetime.date(2026, 10, 2)

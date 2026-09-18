@@ -1,5 +1,5 @@
 """
-Mòdul de Publicació del Briefing Matinal a Discord (10:00 CEST)
+Mòdul de Publicació del Briefing Matinal a Discord (10:00 CEST) - Estratègia 80/20 NY Open
 """
 
 import os
@@ -21,8 +21,8 @@ logger = logging.getLogger("DailyBriefing")
 
 def generate_and_send_briefing(target_date: Optional[datetime.date] = None, is_startup: bool = False) -> bool:
     """
-    Genera i envia el missatge del Briefing Matinal a Discord.
-    is_startup: Si és True, afegeix un badge d'inici de servei a Railway.
+    Genera i envia un informe concís i net a Discord sobre l'operabilitat del dia per a l'estratègia 80/20 NY Open.
+    Sense text sobrant ("palla"), directe als paràmetres i estat clau.
     """
     tz_madrid = pytz.timezone("Europe/Madrid")
     if target_date is None:
@@ -31,25 +31,25 @@ def generate_and_send_briefing(target_date: Optional[datetime.date] = None, is_s
     day_info = get_day_trading_status(target_date)
     active_contract = resolve_active_contract(symbol_base=config.symbol_base)
 
-    prefix = "🚀 [RAILWAY STARTUP] " if is_startup else ""
-    title = f"{prefix}{day_info['badge']} — {day_info['date_str']}"
-    
+    startup_prefix = "🚀 [RAILWAY] " if is_startup else ""
+    title = f"{startup_prefix}🎯 80/20 NY OPEN · {day_info['date_str']}"
+
+    # Text concís, net i directe al gra (sense "palla")
     desc = (
-        f"### 🚦 VEREDICTE DEL DIA: **{day_info['badge']}**\n\n"
-        f"**📅 CONTEXT MACRO**: {day_info['headline']}\n"
-        f"**🕒 FINESTRA OPERATIVA**: `{day_info['time_window']}`\n"
-        f"**📦 CONTRACTE ACTIU CME**: `{active_contract}`\n"
-        f"**⚙️ MODE DEL BOT**: `{config.bot_mode.upper()}` (TP: {config.tp_points} pts | SL: {config.sl_points} pts)\n\n"
-        f"**📋 INSTRUCCIONS DEL PROTOCOL**:\n"
-        f"{day_info['instructions']}\n\n"
-        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"🛡️ _Filtre de Risc CME Globex • Estratègia NQ Zones 2026/2027_"
+        f"### {day_info['badge']}\n\n"
+        f"📅 **Data**: `{day_info['date_str']}`\n"
+        f"📦 **Contracte Actiu**: `{active_contract}`\n"
+        f"📰 **Macro**: {day_info['headline']}\n\n"
+        f"⏰ **Obertura NY**: `15:30 CEST` (09:30 EDT)\n"
+        f"🎯 **Setup**: Zones 20 / 80 (Màx. 1 Trade)\n"
+        f"🛡️ **Bracket OCO**: TP `+{config.tp_points:.0f} pts` | SL `-{config.sl_points:.0f} pts`"
     )
 
-    logger.info(f"Enviant Briefing ({day_info['status']}) per al dia {day_info['date_str']} a Discord...")
+    logger.info(f"Enviant Briefing 80/20 NY Open ({day_info['status']}) per al dia {day_info['date_str']} a Discord...")
     notifier.send(title, desc, color=day_info["color_name"])
     return True
 
 if __name__ == "__main__":
     print("📢 Enviant Briefing de diagnòstic a Discord...")
     generate_and_send_briefing()
+

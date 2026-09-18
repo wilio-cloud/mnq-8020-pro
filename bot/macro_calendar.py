@@ -164,7 +164,7 @@ def get_day_trading_status(target_date: Optional[datetime.date] = None) -> Dict[
                 "is_holiday": False
             }
 
-        # Alerta Vermella: FOMC estàndard (Decisió de tipus a les 20:00 CEST) -> Operable matí de Londres
+        # Alerta Vermella: FOMC estàndard (Decisió de tipus a les 20:00 CEST)
         if severity == "RED":
             return {
                 "date": target_date,
@@ -172,15 +172,11 @@ def get_day_trading_status(target_date: Optional[datetime.date] = None) -> Dict[
                 "status": "RESTRICTED",
                 "severity": "RED",
                 "color_name": "warning",
-                "badge": "🟡 OPERABLE FINS A LES 18:00 CEST (FOMC)",
-                "title": f"ALERTA DECISIÓ FED (FOMC) — {date_str}",
-                "headline": f"{event_name} a les {time_str}",
-                "instructions": (
-                    f"• **11:00 a 18:00 CEST**: Finestra de Londres operable amb normalitat.\n"
-                    f"• ⛔ **18:00 CEST**: Tancament obligatori i cancel·lació de totes les ordres pendents.\n"
-                    f"• 🚫 **18:00 a 22:00 CEST**: Prohibit operar durant l'anunci i la roda de premsa de Powell."
-                ),
-                "time_window": "11:00 a 18:00 CEST (Tancament obligat a les 18:00)",
+                "badge": "🟡 OPERABLE AMB PRECAUCIÓ (FOMC 20:00 CEST)",
+                "title": f"ALERTA FED (FOMC) — {date_str}",
+                "headline": f"{event_name} a les {time_str} (Tancar abans de les 18:00 CEST)",
+                "instructions": "Obertura de NY (15:30) operable amb precaució. Tancar qualsevol posició abans de les 18:00 CEST.",
+                "time_window": "15:30 a 18:00 CEST",
                 "event": event,
                 "is_weekend": False,
                 "is_holiday": False
@@ -196,12 +192,8 @@ def get_day_trading_status(target_date: Optional[datetime.date] = None) -> Dict[
             "badge": "🟡 OPERABLE AMB PRECAUCIÓ (ALTA VOLATILITAT)",
             "title": f"AVÍS MACRO (VOLATILITAT) — {date_str}",
             "headline": f"{event_name} ({time_str})",
-            "instructions": (
-                f"• **11:00 a 14:20 CEST**: La sessió de Londres és 100% operable.\n"
-                f"• ⚠️ **14:20 CEST**: {instructions}\n"
-                f"• Evita mantenir ordres pendents durant la publicació de les 14:30 CEST per evitar slippage."
-            ),
-            "time_window": "11:00 a 14:20 CEST",
+            "instructions": f"{instructions}",
+            "time_window": "15:30 a 17:30 CEST",
             "event": event,
             "is_weekend": False,
             "is_holiday": False
@@ -216,15 +208,11 @@ def get_day_trading_status(target_date: Optional[datetime.date] = None) -> Dict[
         "color_name": "success",
         "badge": "🟢 DIA 100% OPERABLE (LLUM VERDA)",
         "title": f"BRIEFING MACRO — {date_str}",
-        "headline": "Dia net de notícies d'alt impacte institucional.",
-        "instructions": (
-            f"• **11:00 CEST**: Càlcul de zones de London High i London Low.\n"
-            f"• **Ordres Límit**: Sell Limit al High, Buy Limit al Low.\n"
-            f"• **Paràmetres**: Take Profit +10.0 pts | Stop Loss -60.0 pts.\n"
-            f"• **22:55 CEST (16:55 EDT)**: Tancament automàtic EOD CME Globex."
-        ),
-        "time_window": "11:00 a 22:55 CEST (Sessió intradia completa)",
+        "headline": "Sessió neta de notícies d'alt impacte.",
+        "instructions": "Condicions òptimes per a l'obertura de NY (15:30 CEST). Setup 80/20 a nivells 20 i 80.",
+        "time_window": "15:30 a 17:30 CEST",
         "event": None,
         "is_weekend": False,
         "is_holiday": False
     }
+
