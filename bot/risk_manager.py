@@ -13,6 +13,11 @@ class RiskManager:
         Calcula el nombre de contractes MNQ basat en el capital actual
         i els llindars d'escalat de drawdown.
         """
+        if config.bot_mode == "evaluation":
+            qty = config.evaluation_contracts
+            logger.info(f"🎯 [MODE AVALUACIÓ FAST-PASS] Sizing fix: {qty} MNQ (Capital: ${cash_balance:,.2f})")
+            return qty
+
         if not config.auto_scale:
             return config.initial_contracts
 
@@ -25,7 +30,7 @@ class RiskManager:
         else:
             qty = 1
 
-        logger.info(f"Capital: ${cash_balance:,.2f} | Posició calculada: {qty} MNQ")
+        logger.info(f"🛡️ [MODE FUNDED] Capital: ${cash_balance:,.2f} | Posició calculada: {qty} MNQ")
         return qty
 
     def validate_margin(self, cash_balance: float, contracts: int) -> bool:

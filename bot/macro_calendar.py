@@ -8,20 +8,23 @@ from typing import Optional, Dict, Any
 
 MACRO_EVENTS = {
     # --- 2026 ---
-    "2026-09-16": {"type": "FOMC", "severity": "RED", "name": "FOMC Rate Decision", "time_cest": "20:00 CEST", "instructions": "Decisió de tipus de la Fed. Apagar el bot abans de les 18:00 CEST."},
-    "2026-10-02": {"type": "NFP", "severity": "AMBER", "name": "NFP (Ocupació EUA)", "time_cest": "14:30 CEST", "instructions": "Sessió de Londres normal al matí. Si no s'ha tocat a les 14:20 CEST, cancel·lar l'ordre límit pendent."},
+    "2026-09-16": {"type": "FOMC", "severity": "RED", "name": "FOMC Rate Decision", "time_cest": "20:00 CEST", "instructions": "Decisió de tipus de la Fed. Tancament obligatori abans de les 18:00 CEST."},
+    "2026-09-18": {"type": "OPEX", "severity": "AMBER", "name": "Quadruple Witching OpEx (Venciment Trimestral)", "time_cest": "Tot el dia", "instructions": "Alta volatilitat d'expiració de contractes. Londres operable amb normalitat de 11:00 a 16:00 CEST."},
+    "2026-09-30": {"type": "REBALANCING", "severity": "AMBER", "name": "Final de Trimestre Q3 Rebalancing", "time_cest": "16:00 - 22:00 CEST", "instructions": "Fluxos de reequilibri institucional de carteres al final de la sessió americana. Londres al matí és 100% net."},
+    "2026-10-02": {"type": "NFP", "severity": "AMBER", "name": "NFP (Ocupació EUA)", "time_cest": "14:30 CEST", "instructions": "Sessió de Londres normal al matí (11:00 a 14:20 CEST). Si no s'ha tocat a les 14:20 CEST, cancel·lar l'ordre límit pendent."},
     "2026-10-14": {"type": "CPI", "severity": "AMBER", "name": "CPI (Inflació EUA)", "time_cest": "14:30 CEST", "instructions": "Zona de Londres vàlida de 11:00 a 14:20 CEST. Cancel·lar immediatament si no s'ha tocat a les 14:20 CEST."},
-    "2026-11-04": {"type": "FOMC", "severity": "RED", "name": "FOMC Meeting (Dia 1)", "time_cest": "Tot el dia", "instructions": "Rang estret previ a la decisió de tipus. Operar amb màxima prudència."},
-    "2026-11-05": {"type": "FOMC", "severity": "RED", "name": "FOMC Rate Decision", "time_cest": "20:00 CET", "instructions": "Decisió de tipus d'interès. Apagar el bot abans de les 18:00 CET."},
+    "2026-11-04": {"type": "FOMC", "severity": "AMBER", "name": "FOMC Meeting (Dia 1)", "time_cest": "Tot el dia", "instructions": "Rang estret previ a la decisió de tipus. Operable a Londres amb normalitat."},
+    "2026-11-05": {"type": "FOMC", "severity": "RED", "name": "FOMC Rate Decision", "time_cest": "20:00 CET", "instructions": "Decisió de tipus d'interès. Londres operable. Apagar el bot i tancar posicions abans de les 18:00 CET."},
     "2026-11-06": {"type": "NFP", "severity": "AMBER", "name": "NFP (Ocupació EUA)", "time_cest": "14:30 CET", "instructions": "Cancel·lar ordre pendent a les 14:20 CET si encara no s'ha executat."},
     "2026-11-12": {"type": "CPI", "severity": "AMBER", "name": "CPI (Inflació EUA)", "time_cest": "14:30 CET", "instructions": "Zona operable fins a les 14:20 CET. Cancel·lar pendents abans de les 14:30 CET."},
     "2026-11-26": {"type": "HOLIDAY", "severity": "GRAY", "name": "Thanksgiving Day", "time_cest": "Tot el dia", "instructions": "CME Globex tancat. Festa operativa."},
     "2026-11-27": {"type": "HOLIDAY", "severity": "GRAY", "name": "Black Friday (Early Close)", "time_cest": "19:00 CET", "instructions": "Tancament anticipat de mercat. Volum baix, no operar."},
     "2026-12-04": {"type": "NFP", "severity": "AMBER", "name": "NFP (Ocupació EUA)", "time_cest": "14:30 CET", "instructions": "Cancel·lar ordre pendent a les 14:20 CET si no s'ha tocat."},
     "2026-12-10": {"type": "CPI", "severity": "AMBER", "name": "CPI (Inflació EUA)", "time_cest": "14:30 CET", "instructions": "Cancel·lar ordre pendent a les 14:20 CET si no s'ha tocat."},
-    "2026-12-16": {"type": "FOMC", "severity": "RED", "name": "FOMC + Projeccions SEP (Powell)", "time_cest": "20:00 CET", "instructions": "Reunió trimestral clau de la Fed. Apagar el bot completament."},
-    "2026-12-24": {"type": "HOLIDAY", "severity": "GRAY", "name": "Christmas Eve", "time_cest": "19:15 CET", "instructions": "Tancament anticipat. Sense volum institucional."},
+    "2026-12-16": {"type": "FOMC", "severity": "RED", "name": "FOMC + Projeccions SEP (Powell)", "time_cest": "20:00 CET", "instructions": "Reunió trimestral clau de la Fed amb gràfic de punts (dot plot). Apagar el bot completament avui."},
+    "2026-12-24": {"type": "HOLIDAY", "severity": "GRAY", "name": "Christmas Eve", "time_cest": "19:15 CET", "instructions": "Tancament anticipat. Sense volum institucional. No operar."},
     "2026-12-25": {"type": "HOLIDAY", "severity": "GRAY", "name": "Nadal", "time_cest": "Tot el dia", "instructions": "CME Globex tancat."},
+    "2026-12-31": {"type": "HOLIDAY", "severity": "GRAY", "name": "Cap d'Any (Early Close)", "time_cest": "Tot el dia", "instructions": "Volum festiu reduït. Mercat sense liquiditat institucional."},
 
     # --- 2027 ---
     "2027-01-01": {"type": "HOLIDAY", "severity": "GRAY", "name": "Any Nou", "time_cest": "Tot el dia", "instructions": "CME Globex tancat."},
@@ -34,7 +37,7 @@ MACRO_EVENTS = {
     "2027-02-15": {"type": "HOLIDAY", "severity": "GRAY", "name": "Presidents' Day", "time_cest": "19:00 CET", "instructions": "Tancament anticipat CME. No operar."},
     "2027-03-05": {"type": "NFP", "severity": "AMBER", "name": "NFP (Ocupació EUA)", "time_cest": "14:30 CET", "instructions": "Cancel·lar ordre pendent a les 14:20 CET si no s'ha tocat."},
     "2027-03-11": {"type": "CPI", "severity": "AMBER", "name": "CPI (Inflació EUA)", "time_cest": "14:30 CET", "instructions": "Cancel·lar ordre pendent a les 14:20 CET si no s'ha tocat."},
-    "2027-03-17": {"type": "FOMC", "severity": "RED", "name": "FOMC + SEP (Projeccions)", "time_cest": "19:00 CET", "instructions": "Apagar el bot tot el dia."},
+    "2027-03-17": {"type": "FOMC", "severity": "RED", "name": "FOMC + SEP (Projeccions)", "time_cest": "19:00 CET", "instructions": "Reunió trimestral clau. Apagar el bot tot el dia."},
     "2027-03-26": {"type": "HOLIDAY", "severity": "GRAY", "name": "Good Friday", "time_cest": "Tot el dia", "instructions": "CME Globex tancat."},
     "2027-04-02": {"type": "NFP", "severity": "AMBER", "name": "NFP (Ocupació EUA)", "time_cest": "14:30 CEST", "instructions": "Cancel·lar ordre pendent a les 14:20 CEST si no s'ha tocat."},
     "2027-04-14": {"type": "CPI", "severity": "AMBER", "name": "CPI (Inflació EUA)", "time_cest": "14:30 CEST", "instructions": "Cancel·lar ordre pendent a les 14:20 CEST si no s'ha tocat."},
@@ -44,14 +47,14 @@ MACRO_EVENTS = {
     "2027-05-31": {"type": "HOLIDAY", "severity": "GRAY", "name": "Memorial Day", "time_cest": "19:00 CEST", "instructions": "Tancament anticipat CME. No operar."},
     "2027-06-04": {"type": "NFP", "severity": "AMBER", "name": "NFP (Ocupació EUA)", "time_cest": "14:30 CEST", "instructions": "Cancel·lar ordre pendent a les 14:20 CEST si no s'ha tocat."},
     "2027-06-10": {"type": "CPI", "severity": "AMBER", "name": "CPI (Inflació EUA)", "time_cest": "14:30 CEST", "instructions": "Cancel·lar ordre pendent a les 14:20 CEST si no s'ha tocat."},
-    "2027-06-16": {"type": "FOMC", "severity": "RED", "name": "FOMC + SEP (Powell)", "time_cest": "20:00 CEST", "instructions": "Reunió trimestral clau. Apagar el bot."},
+    "2027-06-16": {"type": "FOMC", "severity": "RED", "name": "FOMC + SEP (Powell)", "time_cest": "20:00 CEST", "instructions": "Reunió trimestral clau. Apagar el bot tot el dia."},
     "2027-07-02": {"type": "NFP", "severity": "AMBER", "name": "NFP (Ocupació EUA)", "time_cest": "14:30 CEST", "instructions": "Cancel·lar ordre pendent a les 14:20 CEST si no s'ha tocat."},
     "2027-07-05": {"type": "HOLIDAY", "severity": "GRAY", "name": "Independence Day (Obs)", "time_cest": "Tot el dia", "instructions": "CME Globex tancat."},
     "2027-07-14": {"type": "CPI", "severity": "AMBER", "name": "CPI (Inflació EUA)", "time_cest": "14:30 CEST", "instructions": "Cancel·lar ordre pendent a les 14:20 CEST si no s'ha tocat."},
     "2027-07-28": {"type": "FOMC", "severity": "RED", "name": "FOMC Rate Decision", "time_cest": "20:00 CEST", "instructions": "Apagar el bot abans de les 18:00 CEST."},
     "2027-08-06": {"type": "NFP", "severity": "AMBER", "name": "NFP (Ocupació EUA)", "time_cest": "14:30 CEST", "instructions": "Cancel·lar ordre pendent a les 14:20 CEST si no s'ha tocat."},
     "2027-08-11": {"type": "CPI", "severity": "AMBER", "name": "CPI (Inflació EUA)", "time_cest": "14:30 CEST", "instructions": "Cancel·lar ordre pendent a les 14:20 CEST si no s'ha tocat."},
-    "2027-08-27": {"type": "FOMC", "severity": "AMBER", "name": "Jackson Hole Symposium", "time_cest": "16:00 CEST", "instructions": "Discurs de Powell. Alta volatilitat."},
+    "2027-08-27": {"type": "FOMC", "severity": "RED", "name": "Jackson Hole Economic Symposium", "time_cest": "16:00 CEST", "instructions": "Discurs de Powell sobre política monetària a llarg termini. Apagar el bot."},
     "2027-09-03": {"type": "NFP", "severity": "AMBER", "name": "NFP (Ocupació EUA)", "time_cest": "14:30 CEST", "instructions": "Cancel·lar ordre pendent a les 14:20 CEST si no s'ha tocat."},
     "2027-09-06": {"type": "HOLIDAY", "severity": "GRAY", "name": "Labor Day", "time_cest": "Tot el dia", "instructions": "CME Globex tancat."},
     "2027-09-14": {"type": "CPI", "severity": "AMBER", "name": "CPI (Inflació EUA)", "time_cest": "14:30 CEST", "instructions": "Cancel·lar ordre pendent a les 14:20 CEST si no s'ha tocat."},
@@ -79,3 +82,149 @@ def get_macro_event_for_date(target_date: Optional[datetime.date] = None) -> Opt
         
     date_key = target_date.strftime("%Y-%m-%d")
     return MACRO_EVENTS.get(date_key, None)
+
+def get_day_trading_status(target_date: Optional[datetime.date] = None) -> Dict[str, Any]:
+    """
+    Classifica de manera inequívoca si la jornada és:
+    - 'OPERABLE': Llum Verda (Condicions òptimes, 95% WR).
+    - 'RESTRICTED': Llum Groga (Operable amb precaució i protocol horari estricte).
+    - 'NOT_OPERABLE': Llum Vermella (Mercat tancat o prohibit per risc extrem).
+    """
+    if target_date is None:
+        target_date = datetime.date.today()
+
+    date_str = target_date.strftime("%d/%m/%Y")
+    is_weekend = target_date.weekday() >= 5  # 5=Dissabte, 6=Diumenge
+
+    # 1. Cap de Setmana
+    if is_weekend:
+        day_name = "Dissabte" if target_date.weekday() == 5 else "Diumenge"
+        return {
+            "date": target_date,
+            "date_str": date_str,
+            "status": "NOT_OPERABLE",
+            "severity": "GRAY",
+            "color_name": "danger",
+            "badge": "🔴 DIA NO OPERABLE (CAP DE SETMANA)",
+            "title": f"CAP DE SETMANA — {day_name} {date_str}",
+            "headline": f"Mercat CME Globex tancat ({day_name}).",
+            "instructions": "• No hi ha sessió de trading institucional.\n• El bot roman en repòs fins a l'obertura setmanal de diumenge nit (00:00 CEST dilluns).",
+            "time_window": "Mercat tancat",
+            "event": None,
+            "is_weekend": True,
+            "is_holiday": False
+        }
+
+    event = get_macro_event_for_date(target_date)
+
+    # 2. Esdeveniment al Calendari
+    if event:
+        severity = event.get("severity", "AMBER")
+        event_name = event.get("name", "Esdeveniment Macro")
+        time_str = event.get("time_cest", "Hora no fixada")
+        instructions = event.get("instructions", "")
+
+        # Festius o tancaments anticipats (GRAY)
+        if severity == "GRAY":
+            is_early_close = "Early Close" in event_name or "Tancament anticipat" in instructions
+            status = "NOT_OPERABLE"
+            badge = "🔴 DIA NO OPERABLE (FESTIU CME)" if not is_early_close else "🔴 NO OPERABLE (TANCAMENT ANTICIPAT)"
+            return {
+                "date": target_date,
+                "date_str": date_str,
+                "status": status,
+                "severity": "GRAY",
+                "color_name": "danger",
+                "badge": badge,
+                "title": f"FESTIU CME GLOBEX — {date_str}",
+                "headline": f"{event_name} ({time_str})",
+                "instructions": f"• {instructions}\n• Manca de volum i liquiditat institucional. Prohibit obrir posicions.",
+                "time_window": "Sense operativa",
+                "event": event,
+                "is_weekend": False,
+                "is_holiday": True
+            }
+
+        # Alerta Vermella: FOMC Powell SEP o dia d'apagat total
+        is_full_shutdown = "Apagar el bot completament" in instructions or "Apagar el bot tot el dia" in instructions or "Jackson Hole" in event_name
+        if severity == "RED" and is_full_shutdown:
+            return {
+                "date": target_date,
+                "date_str": date_str,
+                "status": "NOT_OPERABLE",
+                "severity": "RED",
+                "color_name": "danger",
+                "badge": "🔴 DIA NO OPERABLE (ALTA PERILLOSITAT MACRO)",
+                "title": f"ALERTA VERMELLA MACRO — {date_str}",
+                "headline": f"{event_name} (Hora clau: {time_str})",
+                "instructions": f"• {instructions}\n• Volatilitat anòmala i risc màxim d'escombrada no predictible. Bot apagat tot el dia.",
+                "time_window": "0% Operable (Prohibit operar)",
+                "event": event,
+                "is_weekend": False,
+                "is_holiday": False
+            }
+
+        # Alerta Vermella: FOMC estàndard (Decisió de tipus a les 20:00 CEST) -> Operable matí de Londres
+        if severity == "RED":
+            return {
+                "date": target_date,
+                "date_str": date_str,
+                "status": "RESTRICTED",
+                "severity": "RED",
+                "color_name": "warning",
+                "badge": "🟡 OPERABLE FINS A LES 18:00 CEST (FOMC)",
+                "title": f"ALERTA DECISIÓ FED (FOMC) — {date_str}",
+                "headline": f"{event_name} a les {time_str}",
+                "instructions": (
+                    f"• **11:00 a 18:00 CEST**: Finestra de Londres operable amb normalitat.\n"
+                    f"• ⛔ **18:00 CEST**: Tancament obligatori i cancel·lació de totes les ordres pendents.\n"
+                    f"• 🚫 **18:00 a 22:00 CEST**: Prohibit operar durant l'anunci i la roda de premsa de Powell."
+                ),
+                "time_window": "11:00 a 18:00 CEST (Tancament obligat a les 18:00)",
+                "event": event,
+                "is_weekend": False,
+                "is_holiday": False
+            }
+
+        # Alerta Taronja: CPI, NFP, OpEx, Rebalancing (AMBER)
+        return {
+            "date": target_date,
+            "date_str": date_str,
+            "status": "RESTRICTED",
+            "severity": "AMBER",
+            "color_name": "warning",
+            "badge": "🟡 OPERABLE AMB PRECAUCIÓ (ALTA VOLATILITAT)",
+            "title": f"AVÍS MACRO (VOLATILITAT) — {date_str}",
+            "headline": f"{event_name} ({time_str})",
+            "instructions": (
+                f"• **11:00 a 14:20 CEST**: La sessió de Londres és 100% operable.\n"
+                f"• ⚠️ **14:20 CEST**: {instructions}\n"
+                f"• Evita mantenir ordres pendents durant la publicació de les 14:30 CEST per evitar slippage."
+            ),
+            "time_window": "11:00 a 14:20 CEST",
+            "event": event,
+            "is_weekend": False,
+            "is_holiday": False
+        }
+
+    # 3. Dia Normal de Llum Verda (Sense impacte macro)
+    return {
+        "date": target_date,
+        "date_str": target_date.strftime("%d/%m/%Y"),
+        "status": "OPERABLE",
+        "severity": "GREEN",
+        "color_name": "success",
+        "badge": "🟢 DIA 100% OPERABLE (LLUM VERDA)",
+        "title": f"BRIEFING MACRO — {date_str}",
+        "headline": "Dia net de notícies d'alt impacte institucional.",
+        "instructions": (
+            f"• **11:00 CEST**: Càlcul de zones de London High i London Low.\n"
+            f"• **Ordres Límit**: Sell Limit al High, Buy Limit al Low.\n"
+            f"• **Paràmetres**: Take Profit +10.0 pts | Stop Loss -60.0 pts.\n"
+            f"• **22:55 CEST (16:55 EDT)**: Tancament automàtic EOD CME Globex."
+        ),
+        "time_window": "11:00 a 22:55 CEST (Sessió intradia completa)",
+        "event": None,
+        "is_weekend": False,
+        "is_holiday": False
+    }

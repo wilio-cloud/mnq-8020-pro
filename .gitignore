@@ -4,6 +4,7 @@
 !.env.example
 *.log
 *.pid
+bot.log
 
 # Python
 __pycache__/
@@ -17,8 +18,18 @@ venv/
 build/
 dist/
 *.egg-info/
+.pytest_cache/
+
+# Data & results
+data/*.parquet
+data/*.csv
+data/daily_state.json
+results/*.csv
 
 # System & IDE
 .DS_Store
 .vscode/
 .idea/
+.system_generated/
+.user_uploaded/
+

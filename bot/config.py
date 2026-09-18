@@ -31,7 +31,11 @@ class BotConfig:
     point_value: float = 2.0  # 1 punt MNQ = $2 USD
     
     # Risc i Escalat
+    bot_mode: str = os.getenv("BOT_MODE", "funded").lower()  # 'funded', 'evaluation' o 'macro_only'
     initial_contracts: int = int(os.getenv("INITIAL_CONTRACTS", "1"))
+    evaluation_contracts: int = int(os.getenv("EVALUATION_CONTRACTS", "8"))  # Opció A: 8 MNQ Turbo Fast-Pass
+    evaluation_include_asia: bool = os.getenv("EVALUATION_INCLUDE_ASIA", "true").lower() in ("true", "1", "yes")
+    evaluation_min_entry_hour: int = int(os.getenv("EVALUATION_MIN_ENTRY_HOUR", "5"))  # 05:00 EDT (11:00 CEST)
     auto_scale: bool = os.getenv("AUTO_SCALE", "true").lower() in ("true", "1", "yes")
     scale_threshold_2: float = float(os.getenv("SCALE_THRESHOLD_2_CONTRACTS", "2200.0"))
     scale_threshold_3: float = float(os.getenv("SCALE_THRESHOLD_3_CONTRACTS", "3500.0"))
@@ -39,6 +43,8 @@ class BotConfig:
     
     # Horaris (EDT / America/New_York)
     timezone: str = "America/New_York"
+    asia_start_hour: int = int(os.getenv("ASIA_START_HOUR", "20"))
+    asia_end_hour: int = int(os.getenv("ASIA_END_HOUR", "0"))
     london_start_hour: int = int(os.getenv("LONDON_START_HOUR", "2"))
     london_start_minute: int = int(os.getenv("LONDON_START_MINUTE", "0"))
     london_end_hour: int = int(os.getenv("LONDON_END_HOUR", "5"))

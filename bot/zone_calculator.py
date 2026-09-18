@@ -43,6 +43,54 @@ class ZoneCalculator:
         logger.error(f"❌ No s'han pogut calcular els nivells de Londres per a {date}.")
         return None, None
 
+    def calculate_asia_range(
+        self,
+        date: Optional[datetime.date] = None,
+        tradovate_client = None,
+        symbol: str = "MNQ"
+    ) -> Tuple[Optional[float], Optional[float]]:
+        """
+        Calcula el màxim (Asia High) i el mínim (Asia Low) de la sessió d'Àsia
+        (20:00 a 00:00 EDT) prèvia a la sessió del dia indicat.
+        """
+        if date is None:
+            now_ny = datetime.datetime.now(self.tz)
+            date = now_ny.date()
+
+        logger.info(f"Calculant rang d'Àsia per a la sessió: {date} (20:00 - 00:00 EDT)...")
+        prev_day = date - datetime.timedelta(days=1)
+
+        tickers_to_try = ["MNQ=F", "NQ=F"]
+        for t in tickers_to_try:
+            try:
+                ticker = yf.Ticker(t)
+                df = ticker.history(period="5d", interval="1m")
+                if df.empty:
+                    continue
+
+                if df.index.tz is None:
+                    df.index = df.index.tz_localize("UTC").tz_convert(self.tz)
+                else:
+                    df.index = df.index.tz_convert(self.tz)
+
+                mask = (
+                    (df.index.date == prev_day) &
+                    (df.index.hour >= config.asia_start_hour)
+                )
+                asia_bars = df[mask]
+                if len(asia_bars) >= 10:
+                    asia_high = float(asia_bars["High"].max())
+                    asia_low = float(asia_bars["Low"].min())
+                    asia_high = round(round(asia_high / config.tick_size) * config.tick_size, 2)
+                    asia_low = round(round(asia_low / config.tick_size) * config.tick_size, 2)
+                    logger.info(f"✅ Nivells d'Àsia obtinguts: High={asia_high:.2f}, Low={asia_low:.2f}")
+                    return asia_high, asia_low
+            except Exception as e:
+                logger.debug(f"Error consultant {t} per Àsia: {e}")
+
+        logger.warning(f"⚠️ No s'han pogut calcular els nivells d'Àsia per a {date}.")
+        return None, None
+
     def _fetch_from_yfinance(self, target_date: datetime.date) -> Tuple[Optional[float], Optional[float]]:
         """Obté les barres d'1 minut de NQ/MNQ des de CME Globex via yfinance."""
         tickers_to_try = ["MNQ=F", "NQ=F"]

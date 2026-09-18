@@ -102,8 +102,8 @@ class LondonZonesStrategy:
         # 1. Intentar carregar estat persistent si el bot s'ha reiniciat durant el dia
         self.load_state(today)
 
-        # 2. Si no estava marcat com a col·locat, consultar el broker directament
-        if not self.orders_placed:
+        # 2. Si no estava marcat com a col·locat, consultar el broker directament si hi ha credencials
+        if not self.orders_placed and config.user and config.password and config.bot_mode != "macro_only":
             try:
                 if tradovate_client.authenticate():
                     if tradovate_client.has_orders_or_fills_today(today):
@@ -128,6 +128,13 @@ class LondonZonesStrategy:
         # Verificar que sigui dia laborable (dilluns=0 a divendres=4)
         if today.weekday() >= 5:
             logger.info(f"Cap de setmana detectat ({today}). Mercat CME tancat.")
+            return
+
+        # Si estem en mode només macro o no hi ha credencials, no intentar enviar ordres al broker
+        if config.bot_mode == "macro_only" or not config.user:
+            logger.info("ℹ️ Mode Només-Macro actiu o credencials no configurades. Ordres no enviades al broker.")
+            self.orders_placed = True
+            self.save_state()
             return
 
         # 1. Assegurar autenticació
