@@ -103,12 +103,13 @@ def get_day_trading_status(target_date: Optional[datetime.date] = None) -> Dict[
             "date": target_date,
             "date_str": date_str,
             "status": "NOT_OPERABLE",
+            "can_trade": False,
             "severity": "GRAY",
             "color_name": "danger",
-            "badge": "🔴 DIA NO OPERABLE (CAP DE SETMANA)",
-            "title": f"CAP DE SETMANA — {day_name} {date_str}",
+            "badge": "🔴 NO OPERAR (CAP DE SETMANA)",
+            "title": f"MERCAT TANCAT — {day_name} {date_str}",
             "headline": f"Mercat CME Globex tancat ({day_name}).",
-            "instructions": "• No hi ha sessió de trading institucional.\n• El bot roman en repòs fins a l'obertura setmanal de diumenge nit (00:00 CEST dilluns).",
+            "instructions": "Cap de setmana. El mercat romandrà tancat fins diumenge a la nit.",
             "time_window": "Mercat tancat",
             "event": None,
             "is_weekend": True,
@@ -117,99 +118,42 @@ def get_day_trading_status(target_date: Optional[datetime.date] = None) -> Dict[
 
     event = get_macro_event_for_date(target_date)
 
-    # 2. Esdeveniment al Calendari
+    # 2. Esdeveniment de Risc al Calendari (Festiu, FOMC, CPI, NFP, OpEx, Rebalancing)
     if event:
         severity = event.get("severity", "AMBER")
         event_name = event.get("name", "Esdeveniment Macro")
         time_str = event.get("time_cest", "Hora no fixada")
         instructions = event.get("instructions", "")
 
-        # Festius o tancaments anticipats (GRAY)
-        if severity == "GRAY":
-            is_early_close = "Early Close" in event_name or "Tancament anticipat" in instructions
-            status = "NOT_OPERABLE"
-            badge = "🔴 DIA NO OPERABLE (FESTIU CME)" if not is_early_close else "🔴 NO OPERABLE (TANCAMENT ANTICIPAT)"
-            return {
-                "date": target_date,
-                "date_str": date_str,
-                "status": status,
-                "severity": "GRAY",
-                "color_name": "danger",
-                "badge": badge,
-                "title": f"FESTIU CME GLOBEX — {date_str}",
-                "headline": f"{event_name} ({time_str})",
-                "instructions": f"• {instructions}\n• Manca de volum i liquiditat institucional. Prohibit obrir posicions.",
-                "time_window": "Sense operativa",
-                "event": event,
-                "is_weekend": False,
-                "is_holiday": True
-            }
-
-        # Alerta Vermella: FOMC Powell SEP o dia d'apagat total
-        is_full_shutdown = "Apagar el bot completament" in instructions or "Apagar el bot tot el dia" in instructions or "Jackson Hole" in event_name
-        if severity == "RED" and is_full_shutdown:
-            return {
-                "date": target_date,
-                "date_str": date_str,
-                "status": "NOT_OPERABLE",
-                "severity": "RED",
-                "color_name": "danger",
-                "badge": "🔴 DIA NO OPERABLE (ALTA PERILLOSITAT MACRO)",
-                "title": f"ALERTA VERMELLA MACRO — {date_str}",
-                "headline": f"{event_name} (Hora clau: {time_str})",
-                "instructions": f"• {instructions}\n• Volatilitat anòmala i risc màxim d'escombrada no predictible. Bot apagat tot el dia.",
-                "time_window": "0% Operable (Prohibit operar)",
-                "event": event,
-                "is_weekend": False,
-                "is_holiday": False
-            }
-
-        # Alerta Vermella: FOMC estàndard (Decisió de tipus a les 20:00 CEST)
-        if severity == "RED":
-            return {
-                "date": target_date,
-                "date_str": date_str,
-                "status": "RESTRICTED",
-                "severity": "RED",
-                "color_name": "warning",
-                "badge": "🟡 OPERABLE AMB PRECAUCIÓ (FOMC 20:00 CEST)",
-                "title": f"ALERTA FED (FOMC) — {date_str}",
-                "headline": f"{event_name} a les {time_str} (Tancar abans de les 18:00 CEST)",
-                "instructions": "Obertura de NY (15:30) operable amb precaució. Tancar qualsevol posició abans de les 18:00 CEST.",
-                "time_window": "15:30 a 18:00 CEST",
-                "event": event,
-                "is_weekend": False,
-                "is_holiday": False
-            }
-
-        # Alerta Taronja: CPI, NFP, OpEx, Rebalancing (AMBER)
         return {
             "date": target_date,
             "date_str": date_str,
-            "status": "RESTRICTED",
-            "severity": "AMBER",
-            "color_name": "warning",
-            "badge": "🟡 OPERABLE AMB PRECAUCIÓ (ALTA VOLATILITAT)",
-            "title": f"AVÍS MACRO (VOLATILITAT) — {date_str}",
+            "status": "NOT_OPERABLE",
+            "can_trade": False,
+            "severity": severity,
+            "color_name": "danger",
+            "badge": "🔴 NO OPERAR (FILTRE MACRO ACTIVAT)",
+            "title": f"FILTRE DE SEGURETAT — {date_str}",
             "headline": f"{event_name} ({time_str})",
-            "instructions": f"{instructions}",
-            "time_window": "15:30 a 17:30 CEST",
+            "instructions": f"Filtre de preservació de capital activat per {event_name}. Avui no s'opera.",
+            "time_window": "Sense operativa (Filtre activat)",
             "event": event,
             "is_weekend": False,
-            "is_holiday": False
+            "is_holiday": severity == "GRAY"
         }
 
-    # 3. Dia Normal de Llum Verda (Sense impacte macro)
+    # 3. Dia 100% Netejat i Valitat (Llum Verda)
     return {
         "date": target_date,
         "date_str": target_date.strftime("%d/%m/%Y"),
         "status": "OPERABLE",
+        "can_trade": True,
         "severity": "GREEN",
         "color_name": "success",
-        "badge": "🟢 DIA 100% OPERABLE (LLUM VERDA)",
-        "title": f"BRIEFING MACRO — {date_str}",
-        "headline": "Sessió neta de notícies d'alt impacte.",
-        "instructions": "Condicions òptimes per a l'obertura de NY (15:30 CEST). Setup 80/20 a nivells 20 i 80.",
+        "badge": "🟢 OPERAR (LLUM VERDA)",
+        "title": f"80/20 NY OPEN — {date_str}",
+        "headline": "Sessió neta de notícies d'impacte institucional.",
+        "instructions": "Condicions òptimes a l'obertura de NY (15:30 CEST). Executar 1 sol trade a nivells 20 / 80.",
         "time_window": "15:30 a 17:30 CEST",
         "event": None,
         "is_weekend": False,

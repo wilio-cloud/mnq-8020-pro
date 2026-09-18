@@ -34,16 +34,26 @@ def generate_and_send_briefing(target_date: Optional[datetime.date] = None, is_s
     startup_prefix = "🚀 [RAILWAY] " if is_startup else ""
     title = f"{startup_prefix}🎯 80/20 NY OPEN · {day_info['date_str']}"
 
-    # Text concís, net i directe al gra (sense "palla")
-    desc = (
-        f"### {day_info['badge']}\n\n"
-        f"📅 **Data**: `{day_info['date_str']}`\n"
-        f"📦 **Contracte Actiu**: `{active_contract}`\n"
-        f"📰 **Macro**: {day_info['headline']}\n\n"
-        f"⏰ **Obertura NY**: `15:30 CEST` (09:30 EDT)\n"
-        f"🎯 **Setup**: Zones 20 / 80 (Màx. 1 Trade)\n"
-        f"🛡️ **Bracket OCO**: TP `+{config.tp_points:.0f} pts` | SL `-{config.sl_points:.0f} pts`"
-    )
+    # Format binari net, clar i sense palla
+    if day_info.get("can_trade", False):
+        desc = (
+            f"### {day_info['badge']}\n\n"
+            f"📅 **Data**: `{day_info['date_str']}`\n"
+            f"📦 **Contracte**: `{active_contract}`\n"
+            f"📰 **Macro**: {day_info['headline']}\n\n"
+            f"⏰ **Obertura NY**: `15:30 CEST` (09:30 EDT)\n"
+            f"🎯 **Setup**: Zones 20 / 80 (Màx. 1 Trade)\n"
+            f"🛡️ **Bracket OCO**: TP `+{config.tp_points:.0f} pts` | SL `-{config.sl_points:.0f} pts`"
+        )
+    else:
+        desc = (
+            f"### {day_info['badge']}\n\n"
+            f"📅 **Data**: `{day_info['date_str']}`\n"
+            f"📦 **Contracte**: `{active_contract}`\n"
+            f"⛔ **Motiu**: {day_info['headline']}\n\n"
+            f"🚫 **Acció**: Filtre activat. **NO OPERAR AVUI**.\n"
+            f"🛡️ **Capital**: Protegim el compte i esperem la propera sessió neta."
+        )
 
     logger.info(f"Enviant Briefing 80/20 NY Open ({day_info['status']}) per al dia {day_info['date_str']} a Discord...")
     notifier.send(title, desc, color=day_info["color_name"])

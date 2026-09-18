@@ -23,43 +23,36 @@ def test_holiday_status():
     christmas = datetime.date(2026, 12, 25)
     res = get_day_trading_status(christmas)
     assert res["status"] == "NOT_OPERABLE"
+    assert res["can_trade"] is False
     assert res["is_holiday"] is True
-    assert "FESTIU CME" in res["badge"]
+    assert "NO OPERAR" in res["badge"]
 
-def test_fomc_full_shutdown():
+def test_fomc_status():
     fomc_sep = datetime.date(2026, 12, 16)
     res = get_day_trading_status(fomc_sep)
     assert res["status"] == "NOT_OPERABLE"
-    assert res["severity"] == "RED"
-    assert "ALTA PERILLOSITAT" in res["badge"]
+    assert res["can_trade"] is False
+    assert "NO OPERAR" in res["badge"]
 
-def test_fomc_standard_restricted():
-    fomc_standard = datetime.date(2026, 11, 5)
-    res = get_day_trading_status(fomc_standard)
-    assert res["status"] == "RESTRICTED"
-    assert res["severity"] == "RED"
-    assert "FOMC" in res["badge"]
-    assert "18:00 CEST" in res["instructions"]
-
-def test_amber_nfp_restricted():
+def test_amber_nfp_status():
     nfp = datetime.date(2026, 10, 2)
     res = get_day_trading_status(nfp)
-    assert res["status"] == "RESTRICTED"
-    assert res["severity"] == "AMBER"
-    assert "PRECAUCIÓ" in res["badge"]
+    assert res["status"] == "NOT_OPERABLE"
+    assert res["can_trade"] is False
+    assert "NO OPERAR" in res["badge"]
 
 def test_clean_green_day():
     clean_day = datetime.date(2026, 9, 17)
     res = get_day_trading_status(clean_day)
     assert res["status"] == "OPERABLE"
+    assert res["can_trade"] is True
     assert res["severity"] == "GREEN"
-    assert "LLUM VERDA" in res["badge"]
+    assert "OPERAR" in res["badge"]
 
 if __name__ == "__main__":
     test_weekend_status()
     test_holiday_status()
-    test_fomc_full_shutdown()
-    test_fomc_standard_restricted()
-    test_amber_nfp_restricted()
+    test_fomc_status()
+    test_amber_nfp_status()
     test_clean_green_day()
     print("✅ Tots els tests de test_macro_status han passat correctament!")
