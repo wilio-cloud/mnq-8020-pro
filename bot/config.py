@@ -56,10 +56,7 @@ class BotConfig:
     eod_close_minute: int = int(os.getenv("EOD_CLOSE_MINUTE", "55"))
     
     # Alertes
-    discord_webhook_url: Optional[str] = os.getenv(
-        "DISCORD_WEBHOOK_URL",
-        "https://discord.com/api/webhooks/1550422906197254175/GIXPr_ZzH4S0KF7irCbEb9wiim3lO8e0_TiMK7mXNWYiKjHD6VFWKMkhKXec8paO-z7n"
-    )
+    discord_webhook_url: Optional[str] = os.getenv("DISCORD_WEBHOOK_URL", None)
     telegram_bot_token: Optional[str] = os.getenv("TELEGRAM_BOT_TOKEN", None)
     telegram_chat_id: Optional[str] = os.getenv("TELEGRAM_CHAT_ID", None)
 
